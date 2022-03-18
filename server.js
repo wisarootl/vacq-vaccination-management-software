@@ -12,6 +12,7 @@ connectDB()
 // route files
 const hospitals = require('./routes/hospitals')
 const auth = require('./routes/auth')
+const appointments = require('./routes/appointments')
 
 const app = express()
 
@@ -24,6 +25,7 @@ app.use(cookieParser())
 // mount routers
 app.use('/api/v1/hospitals', hospitals)
 app.use('/api/v1/auth', auth)
+app.use('/api/v1/appointments', appointments)
 
 const PORT = process.env.PORT || 5000
 const server = app.listen(
