@@ -2,12 +2,12 @@ const express = require('express')
 const dotenv = require('dotenv')
 const cookieParser = require('cookie-parser')
 const connectDB = require('./config/db')
-const mongoSanitize = require('express-mongo-sanitize') // ! add more
-const helmet = require('helmet') // ! add more
-const xss = require('xss-clean') // ! add more
-const rateLimit = require('express-rate-limit') // ! add more
-const hpp = require('hpp') // ! add more
-const cors = require('cors') // ! add more
+const mongoSanitize = require('express-mongo-sanitize')
+const helmet = require('helmet')
+const xss = require('xss-clean')
+const rateLimit = require('express-rate-limit')
+const hpp = require('hpp')
+const cors = require('cors')
 
 // load env vars
 dotenv.config({ path: './config/config.env' })
@@ -29,13 +29,13 @@ app.use(express.json())
 app.use(cookieParser())
 
 // sanitize data
-app.use(mongoSanitize()) // ! add more
+app.use(mongoSanitize())
 
 // set security headers
-app.use(helmet()) // ! add more
+app.use(helmet())
 
 // prevent XSS attacks
-app.use(xss()) // ! add more
+app.use(xss())
 
 // rate limiting
 // < 100 times API call per 10 mins
@@ -43,13 +43,13 @@ const limiter = rateLimit({
   windowsMs: 10 * 60 * 1000, // 10 mins
   max: 100
 })
-app.use(limiter) // ! add more
+app.use(limiter)
 
 // prevent http param pollutions
-app.use(hpp()) // ! add more
+app.use(hpp())
 
 // enable CORS
-app.use(cors()) // ! add more
+app.use(cors())
 
 // mount routers
 app.use('/api/v1/hospitals', hospitals)

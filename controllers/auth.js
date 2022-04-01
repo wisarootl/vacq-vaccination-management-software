@@ -87,7 +87,6 @@ exports.getMe = async (req, res, next) => {
   })
 }
 
-// ! add more
 //@dec    log user out / clear cookies
 //@route  GET /api/v1/auth/logout
 //@access Private
