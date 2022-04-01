@@ -26,28 +26,34 @@ exports.register = async (req, res, next) => {
 //@route  POST /api/v1/auth/login
 //@access Public
 exports.login = async (req, res, next) => {
-  const { email, password } = req.body
+  try {
+    const { email, password } = req.body
 
-  // validate email & password
-  if (!email || !password) {
-    return res.status(400).json({ success: false, msg: 'Please provide an email and password' })
+    // validate email & password
+    if (!email || !password) {
+      return res.status(400).json({ success: false, msg: 'Please provide an email and password' })
+    }
+
+    // check for user
+    const user = await User.findOne({ email }).select('+password')
+
+    if (!user) {
+      return res.status(400).json({ success: false, msg: 'invalid credentials' })
+    }
+
+    // check if password matches
+    const isMatch = await user.matchPassword(password)
+
+    if (!isMatch) {
+      return ReadableStream.status(401).json({ success: false, msg: 'invalid credentials' })
+    }
+
+    sendTokenResponse(user, 200, res)
+  } catch (err) {
+    return res
+      .status(401)
+      .json({ success: false, msg: 'email or password cannot be converted to string' })
   }
-
-  // check for user
-  const user = await User.findOne({ email }).select('+password')
-
-  if (!user) {
-    return res.status(400).json({ success: false, msg: 'invalid credentials' })
-  }
-
-  // check if password matches
-  const isMatch = await user.matchPassword(password)
-
-  if (!isMatch) {
-    return ReadableStream.status(401).json({ success: false, msg: 'invalid credentials' })
-  }
-
-  sendTokenResponse(user, 200, res)
 }
 
 // Get token from model, create cookie and send response
@@ -79,4 +85,21 @@ exports.getMe = async (req, res, next) => {
     success: true,
     data: user
   })
+}
+
+// ! add more
+//@dec    log user out / clear cookies
+//@route  GET /api/v1/auth/logout
+//@access Private
+exports.logout = async (req, res, next) => {
+  res
+    .status(200)
+    .cookie('token', 'null', {
+      expires: new Date(Date.now() + 10 * 1000),
+      httpOnly: true
+    })
+    .json({
+      success: true,
+      data: {}
+    })
 }

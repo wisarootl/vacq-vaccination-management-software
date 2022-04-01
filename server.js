@@ -2,6 +2,12 @@ const express = require('express')
 const dotenv = require('dotenv')
 const cookieParser = require('cookie-parser')
 const connectDB = require('./config/db')
+const mongoSanitize = require('express-mongo-sanitize') // ! add more
+const helmet = require('helmet') // ! add more
+const xss = require('xss-clean') // ! add more
+const rateLimit = require('express-rate-limit') // ! add more
+const hpp = require('hpp') // ! add more
+const cors = require('cors') // ! add more
 
 // load env vars
 dotenv.config({ path: './config/config.env' })
@@ -21,6 +27,29 @@ app.use(express.json())
 
 // cookie parser
 app.use(cookieParser())
+
+// sanitize data
+app.use(mongoSanitize()) // ! add more
+
+// set security headers
+app.use(helmet()) // ! add more
+
+// prevent XSS attacks
+app.use(xss()) // ! add more
+
+// rate limiting
+// < 100 times API call per 10 mins
+const limiter = rateLimit({
+  windowsMs: 10 * 60 * 1000, // 10 mins
+  max: 100
+})
+app.use(limiter) // ! add more
+
+// prevent http param pollutions
+app.use(hpp()) // ! add more
+
+// enable CORS
+app.use(cors()) // ! add more
 
 // mount routers
 app.use('/api/v1/hospitals', hospitals)
