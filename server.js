@@ -8,6 +8,8 @@ const xss = require('xss-clean')
 const rateLimit = require('express-rate-limit')
 const hpp = require('hpp')
 const cors = require('cors')
+const swaggerJsDoc = require('swagger-jsdoc')
+const swaggerUI = require('swagger-ui-express')
 
 // load env vars
 dotenv.config({ path: './config/config.env' })
@@ -21,6 +23,23 @@ const auth = require('./routes/auth')
 const appointments = require('./routes/appointments')
 
 const app = express()
+
+// swagger
+const swaggerOptions = {
+  swaggerDefinition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Library API',
+      version: '1.0.0',
+      description: 'A simmple express VacQ API'
+    },
+    servers: [{ url: '/api/v1' }]
+  },
+  apis: ['./routes/*.js']
+}
+
+const swaggerDocs = swaggerJsDoc(swaggerOptions)
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs))
 
 // body parser
 app.use(express.json())
